@@ -57,45 +57,6 @@ var show = function(){
     ctx.textAlign = "left";
     fillTextMultiLine(ctx, buf, 0,15);
 }
-
-var GameState = {
-    state: false
-};
-var startGame = function(){
-    GameState.state = true;
-};
-var frameNum = 0;
-function render(){
-    playerFrame = Math.floor((frameNum % 30)/7.5);
-    playerDir = Math.floor((frameNum % 120)/30);
-    
-    // TODO: when layering text over text, check for collision - want to prevent user from walking out of (box), or into enemies, or enemy fire
-    
-    //when game is in startup mode, show startup loop
-    if(!GameState.state){ 
-        // for 1 second, show coming soon, for 1 second show Title, repeat
-        buf = (frameNum % 60 < 30) ? layerText(box, comingSoon, 0, 0) : layerText( box, title, 0,0); //javascript ternary assignment
-        
-        // render player
-        buf = layerText(buf, player[playerDir][playerFrame], 35, 22);
-    }
-    else{
-        buf = box;
-        buf = layerText(buf, player[playerDir][playerFrame], 35, 22);
-        
-        // render first enemy
-        buf = layerText(buf, enemy, 6, 3);
-        
-        //todo: for moving enemies
-    }
-        
-    
-    // show once buf is set frame(has player and enemies layered in)
-    show();
-    frameNum +=  1;
-    setTimeout(render, 1000/30); //30 fps
-}
-
 function parsePlayer(playerString){
     var player = [
         ["","","",""],
@@ -119,6 +80,70 @@ function parsePlayer(playerString){
         }
     return player;
 }
+
+
+var GameState = {
+    state: false
+};
+var startGame = function(){
+    GameState.state = true;
+};
+
+// player movement
+player_x_pos = 35;
+player_y_pos = 22;
+// 'W' & 'up arrow' moves you up
+var goUp = function(){
+    player_y_pos = player_y_pos - 2;
+}
+
+// 'A' & 'left arrow' moves you left
+var goLeft = function(){
+    player_x_pos = player_x_pos - 2;
+}
+
+// 'S' & 'down arrow' moves you down
+var goDown = function(){
+    player_y_pos = player_y_pos + 2;
+}
+
+// 'D' & 'right arrow' moves you right
+var goRight = function(){
+    player_x_pos = player_x_pos + 2;
+}
+    
+var frameNum = 0;
+    
+function render(){
+    playerFrame = Math.floor((frameNum % 30)/7.5);
+    playerDir = Math.floor((frameNum % 120)/30);
+    // TODO: when layering text over text, check for collision - want to prevent user from walking out of (box), or into enemies, or enemy fire
+    
+    //when game is in startup mode, show startup loop
+    if(!GameState.state){ 
+        // for 1 second, show coming soon, for 1 second show Title, repeat
+        buf = (frameNum % 60 < 30) ? layerText(box, comingSoon, 0, 0) : layerText( box, title, 0,0); //javascript ternary assignment
+        
+        // render player
+        buf = layerText(buf, player[playerDir][playerFrame], player_x_pos, player_y_pos);
+    }
+    else{
+        buf = box;
+        buf = layerText(buf, player[playerDir][playerFrame], player_x_pos, player_y_pos);
+        
+        // render first enemy
+        buf = layerText(buf, enemy, 6, 3);
+        
+        //todo: for moving enemies
+    }
+        
+    
+    // show once buf is set frame(has player and enemies layered in)
+    show();
+    frameNum +=  1;
+    setTimeout(render, 1000/30); //30 fps
+}
+
 
 $.get('html/box.txt', function(response){
     box=response;
@@ -161,6 +186,28 @@ document.addEventListener('keyup', function (e) {
     if(e.keyCode == 13){
         startGame();
     }
+    
+    // 'W' & 'up arrow' moves you up
+    if(e.keyCode == 38 || e.keyCode == 87){
+        goUp();
+    }
+    
+    // 'A' & 'left arrow' moves you left
+    if(e.keyCode == 65 || e.keyCode == 37){
+        goLeft();
+    }
+    
+    // 'S' & 'down arrow' moves you down
+    if(e.keyCode == 83 || e.keyCode == 40){
+        goDown()
+    }
+    
+    // 'D' & 'right arrow' moves you right
+    if(e.keyCode == 68 || e.keyCode == 39){
+        goRight();
+    }
+    
+    
     
     // Player reacts to keys
     //player.handleInput(allowedKeys[e.keyCode]);
