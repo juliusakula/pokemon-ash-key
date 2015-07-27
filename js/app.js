@@ -94,7 +94,7 @@ player_x_pos = 35;
 player_y_pos = 22;
 // 'W' & 'up arrow' moves you up
 var goUp = function(){
-    player_y_pos = player_y_pos - 2;
+    player_y_pos = player_y_pos - 1;
 }
 
 // 'A' & 'left arrow' moves you left
@@ -104,7 +104,7 @@ var goLeft = function(){
 
 // 'S' & 'down arrow' moves you down
 var goDown = function(){
-    player_y_pos = player_y_pos + 2;
+    player_y_pos = player_y_pos + 1;
 }
 
 // 'D' & 'right arrow' moves you right
